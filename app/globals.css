@@ -1,0 +1,178 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Updated to Netflix-inspired red, black, white theme */
+  --background: #000000; /* Black background for premium feel */
+  --foreground: #ffffff; /* White text for high contrast */
+  --card: oklch(13% 0.028 261.692); /* Dark gray for cards */
+  --card-foreground: #ffffff; /* White text on cards */
+  --popover: #dc2626; /* Netflix red for popovers */
+  --popover-foreground: #ffffff; /* White text on popovers */
+  --primary: #b92025; /* Netflix red primary */
+  --primary-foreground: #ffffff; /* White text on primary */
+  --secondary: #f59e0b; /* Golden accent */
+  --secondary-foreground: #000000; /* Black text on secondary */
+  --muted: #374151; /* Dark gray for muted elements */
+  --muted-foreground: #9ca3af; /* Light gray for muted text */
+  --accent: #f59e0b; /* Golden accent color */
+  --accent-foreground: #000000; /* Black text on accent */
+  --destructive: #be123c; /* Dark red for destructive actions */
+  --destructive-foreground: #ffffff; /* White text on destructive */
+  --border: oklch(27.8% 0.033 256.848); /* Dark gray borders */
+  --input: #1f2937; /* Dark input backgrounds */
+  --input-text: oklch(44.6% 0.03 256.802);
+  --ring: #dc2626; /* Red focus rings */
+  --chart-1: #f59e0b;
+  --chart-2: #dc2626;
+  --chart-3: #000000;
+  --chart-4: #fef2f2;
+  --chart-5: #374151;
+  --radius: 0.5rem;
+  --sidebar: #000000; /* Black sidebar */
+  --sidebar-foreground: #ffffff; /* White sidebar text */
+  --sidebar-primary: #dc2626; /* Red sidebar primary */
+  --sidebar-primary-foreground: #ffffff; /* White text on sidebar primary */
+  --sidebar-accent: #f59e0b; /* Golden sidebar accent */
+  --sidebar-accent-foreground: #000000; /* Black text on sidebar accent */
+  --sidebar-border: #374151; /* Dark gray sidebar borders */
+  --sidebar-ring: #dc2626; /* Red sidebar focus rings */
+}
+
+.dark {
+  /* Dark mode uses same colors since we're already dark-themed */
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: oklch(13% 0.028 261.692);
+  --card-foreground: #ffffff;
+  --popover: #dc2626;
+  --popover-foreground: #ffffff;
+  --primary: #b92025;
+  --primary-foreground: #ffffff;
+  --secondary: #f59e0b;
+  --secondary-foreground: #000000;
+  --muted: #374151;
+  --muted-foreground: #9ca3af;
+  --accent: #f59e0b;
+  --accent-foreground: #000000;
+  --destructive: #be123c;
+  --destructive-foreground: #ffffff;
+  --border: oklch(27.8% 0.033 256.848);
+  --input: #1f2937;
+  --input-text: oklch(44.6% 0.03 256.802);
+  --ring: #dc2626;
+  --chart-1: #f59e0b;
+  --chart-2: #dc2626;
+  --chart-3: #ffffff;
+  --chart-4: #1a1a1a;
+  --chart-5: #374151;
+  --sidebar: #000000;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #dc2626;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f59e0b;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #374151;
+  --sidebar-ring: #dc2626;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-text: var(--input-text);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Added custom Netflix-style scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+/* iOS Spinner Animation */
+@keyframes spinner-leaf-fade {
+  0%, 100% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.7;
+  }
+}
+
+.animate-spinner-leaf-fade {
+  animation: spinner-leaf-fade 1s linear infinite;
+}
