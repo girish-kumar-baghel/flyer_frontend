@@ -132,10 +132,14 @@ export async function GET(request: NextRequest) {
     const sponsorsSanitized = Array.isArray(formDataObj.sponsors) ? formDataObj.sponsors.map((s: any) => ({ name: s.name || '' })) : [];
 
     formData.append('djs', JSON.stringify(djsSanitized))
-    formData.append('host', JSON.stringify(hostsSanitized)) 
+
+    // FIX: Backend expects 'host' as a SINGLE object, not an array (based on Postman code)
+    const hostPayload = hostsSanitized.length > 0 ? hostsSanitized[0] : { name: '' };
+    formData.append('host', JSON.stringify(hostPayload)) 
+    
     formData.append('sponsors', JSON.stringify(sponsorsSanitized))
 
-    console.log('🔍 DEBUG - JSON stringified host (sanitized):', JSON.stringify(hostsSanitized));
+    console.log('🔍 DEBUG - JSON stringified host (sanitized):', JSON.stringify(hostPayload));
     console.log('🔍 DEBUG - JSON stringified sponsors (sanitized):', JSON.stringify(sponsorsSanitized));
 
     // Add venue_text if present
