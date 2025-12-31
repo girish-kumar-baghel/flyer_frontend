@@ -94,7 +94,7 @@ const EventDetails = observer(() => {
                 Event Details *
             </h2>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Presenting */}
                 <div className="col-span-1">
                     <Label htmlFor="presenting" className="text-sm mb-2 block font-semibold">
@@ -136,7 +136,7 @@ const EventDetails = observer(() => {
                 </div>
 
                 {/* Date */}
-                <div>
+                <div className="col-span-1">
                     <Label
                         htmlFor="date"
                         className="text-sm mb-2 font-semibold flex items-center gap-2"
@@ -195,7 +195,7 @@ const EventDetails = observer(() => {
                 </div>
 
                 {/* Flyer Information */}
-                <div className="col-span-2">
+                <div className="col-span-1 md:col-span-2">
                     <Label htmlFor="information" className="text-sm mb-2 block font-semibold">
                         Flyer Information
                     </Label>
@@ -215,7 +215,7 @@ const EventDetails = observer(() => {
                 </div>
 
                 {/* Address & Phone */}
-                <div className="col-span-2">
+                <div className="col-span-1 md:col-span-2">
                     <Label htmlFor="address" className="text-sm mb-2 block font-semibold">
                         Address & Phone no.
                     </Label>
@@ -235,7 +235,7 @@ const EventDetails = observer(() => {
                 </div>
 
                 {/* Venue Logo (Universal System) */}
-                <div className="col-span-2">
+                <div className="col-span-1 md:col-span-2">
                     <Label htmlFor="logo" className="text-sm mb-2 block font-semibold">
                         Venue Logo (Attachment)
                     </Label>

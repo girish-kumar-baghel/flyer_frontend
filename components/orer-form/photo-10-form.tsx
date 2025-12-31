@@ -59,23 +59,38 @@ const Photo10Form: React.FC<Photo10FormProps> = ({ flyer }) => {
 
     // DJ List: First 2 with photo, Last 2 text-only
     const [djList, setDjList] = useState<{ name: string; image: string | null; hasPhoto: boolean }[]>(() => {
-        const storeDJs = flyerFormStore.flyerFormDetail.djsOrArtists;
         return [0, 1, 2, 3].map((i) => ({
-            name: storeDJs[i]?.name || "",
-            image: storeDJs[i]?.image ? URL.createObjectURL(storeDJs[i].image!) : null,
+            name: "",
+            image: null,
             hasPhoto: i < 2, // First 2 have photo
         }));
     });
 
     // Host List: First with photo, Second text-only
     const [hostList, setHostList] = useState<{ name: string; image: string | null; hasPhoto: boolean }[]>(() => {
-        const storeHosts = flyerFormStore.flyerFormDetail.host || [];
         return [0, 1].map((i) => ({
-            name: storeHosts[i]?.name || "",
-            image: storeHosts[i]?.image ? URL.createObjectURL(storeHosts[i].image!) : null,
+            name: "",
+            image: null,
             hasPhoto: i === 0, // First 1 has photo
         }));
     });
+
+    // Sync from MobX store after mount to be SSR-safe
+    useEffect(() => {
+        const storeDJs = flyerFormStore.flyerFormDetail.djsOrArtists;
+        setDjList([0, 1, 2, 3].map((i) => ({
+            name: storeDJs[i]?.name || "",
+            image: (storeDJs[i]?.image && typeof window !== 'undefined') ? URL.createObjectURL(storeDJs[i].image!) : null,
+            hasPhoto: i < 2,
+        })));
+
+        const storeHosts = flyerFormStore.flyerFormDetail.host || [];
+        setHostList([0, 1].map((i) => ({
+            name: storeHosts[i]?.name || "",
+            image: (storeHosts[i]?.image && typeof window !== 'undefined') ? URL.createObjectURL(storeHosts[i].image!) : null,
+            hasPhoto: i === 0,
+        })));
+    }, [flyerFormStore.flyerFormDetail]);
 
     const [note, setNote] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -376,10 +391,10 @@ const Photo10Form: React.FC<Photo10FormProps> = ({ flyer }) => {
     const flyerName = flyer?.name || "";
 
     return (
-        <div className="min-h-screen bg-black text-white">
-            <div className="grid lg:grid-cols-2 gap-8 p-3 md:p-5 max-w-[1600px] mx-auto">
+        <div className="min-h-screen bg-black text-white overflow-x-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-3 md:p-5 max-w-[1600px] mx-auto w-full">
                 {/* Left: Flyer Preview */}
-                <div className="space-y-4">
+                <div className="space-y-4 w-full max-w-[280px] mx-auto lg:max-w-full">
                     {/* Header: Title & Price - Restored to match screenshot */}
                     <div className="flex justify-between items-start gap-4">
                         <h1 className="text-2xl font-bold text-white leading-tight max-w-[70%]">{flyerName}</h1>
@@ -488,13 +503,16 @@ const Photo10Form: React.FC<Photo10FormProps> = ({ flyer }) => {
                             })}
 
                             {/* Add More / Show Less Button */}
-                            <Button
+                            <button
                                 type="button"
                                 onClick={() => setShowAllDJs(!showAllDJs)}
-                                className="mt-2 bg-primary hover:bg-red-550 hover:cursor-pointer w-full"
+                                className="mt-2 w-full h-10 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-md bg-[#b92025] hover:bg-red-600"
+                                style={{ backgroundColor: '#b92025', color: 'white' }}
                             >
-                                {showAllDJs ? `Show Less (${djList.length}/4)` : `Add More (2/4)`}
-                            </Button>
+                                <span className="text-white font-semibold text-sm">
+                                    {showAllDJs ? `Show Less (${djList.length}/4)` : `Add More (2/4)`}
+                                </span>
+                            </button>
                         </div>
 
                         {/* Host Section - 1 WITH PHOTO + 1 TEXT ONLY */}
@@ -597,25 +615,25 @@ const Photo10Form: React.FC<Photo10FormProps> = ({ flyer }) => {
                     {/* Submit Section */}
                     <div className="bg-gradient-to-br from-red-950/30 to-black p-4 rounded-2xl border border-gray-800 flex items-center justify-between">
                         <div className="flex gap-4 justify-center items-center">
-                            <Button
+                            <button
                                 type="button"
                                 disabled={isSubmitting}
                                 onClick={handleCheckout}
-                                className="bg-primary hover:bg-red-550 text-white px-3 
-                rounded-lg hover:cursor-pointer transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-900/50"
+                                className="h-10 px-6 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-900/50 bg-[#b92025] hover:bg-red-600"
+                                style={{ backgroundColor: '#b92025', color: 'white' }}
                             >
                                 {isSubmitting ? (
-                                    <span className="flex items-center gap-2">
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    <span className="flex items-center gap-2 text-white font-semibold text-sm">
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                         Processing...
                                     </span>
                                 ) : (
-                                    <span className="flex items-center gap-2">
+                                    <span className="flex items-center gap-2 text-white font-semibold text-sm">
                                         <Check className="w-5 h-5" />
                                         Checkout Now
                                     </span>
                                 )}
-                            </Button>
+                            </button>
 
                             <Button
                                 type="button"

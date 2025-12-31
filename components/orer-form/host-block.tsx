@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Music, Upload } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { observer } from "mobx-react-lite";
 import { useStore } from "@/stores/StoreProvider";
@@ -168,9 +169,15 @@ const HostSection = observer(() => {
         <button
           type="button"
           onClick={handleAddHost}
-          className="w-full py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary/90 transition-all"
+          className="w-full h-10 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-md bg-[#b92025] hover:bg-red-600"
+          style={{
+            backgroundColor: '#b92025',
+            color: 'white'
+          }}
         >
-          Add Host ({hosts.length}/2)
+          <span className="text-white font-semibold text-sm">
+            Add Host ({hosts.length}/2)
+          </span>
         </button>
       )}
     </div>

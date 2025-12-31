@@ -205,19 +205,36 @@ const EventBookingForm = () => {
   const [note, setNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cartData, setCartData] = useState<any>(null);
-  const [djList, setDjList] = useState<
-    { name: string; image: string | null }[]
-  >([
-    { name: "", image: null },
-    { name: "", image: null },
-  ]);
+  const [djList, setDjList] = useState<{ id: number; name: string; image: string | null }[]>(() => {
+    return [0].map((_, index) => ({
+      id: index + 1,
+      name: "",
+      image: null
+    }));
+  });
 
-  const [djListText, setDjListText] = useState<
-    { name: string }[]
-  >([
-    { name: "" },
-    { name: "" },
-  ]);
+  const [djListText, setDjListText] = useState<{ id: number; name: string }[]>(() => {
+    return [0].map((_, index) => ({
+      id: index + 1,
+      name: ""
+    }));
+  });
+
+  // Sync with store after mount to be SSR-safe
+  useEffect(() => {
+    const storeDJs = flyerFormStore.flyerFormDetail.djsOrArtists;
+    if (storeDJs.length > 0) {
+      setDjList(storeDJs.map((dj, index) => ({
+        id: index + 1,
+        name: dj.name,
+        image: (dj.image && typeof window !== 'undefined') ? URL.createObjectURL(dj.image) : null
+      })));
+      setDjListText(storeDJs.map((dj, index) => ({
+        id: index + 1,
+        name: dj.name
+      })));
+    }
+  }, [flyerFormStore.flyerFormDetail.djsOrArtists]);
 
   // ✅ MULTIPLE SELECTION STATE
   const [selectedFlyerIds, setSelectedFlyerIds] = useState<string[]>([]);
@@ -241,8 +258,9 @@ const EventBookingForm = () => {
     .filter(id => id !== flyer?.id) // Exclude current active flyer (already in basePrice)
     .reduce((sum, id) => {
       // Find flyer in similarFlyers to get its price
-      const found = flyerFormStore.similarFlyers.find(f => String(f.id) === String(id));
-      const price = found ? (typeof found.price === 'number' ? found.price : Number(found.price?.replace('$', '') || 0)) : 0;
+      const found = flyerFormStore.similarFlyers.find(f => String(f.id) === String(id)) as any;
+      const priceStr = found ? found.price : 0;
+      const price = typeof priceStr === 'number' ? priceStr : Number(String(priceStr || 0).replace('$', ''));
       return sum + price;
     }, 0);
 
@@ -1056,10 +1074,10 @@ const EventBookingForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="grid lg:grid-cols-2 gap-8 p-3 md:p-5 max-w-[1600px] mx-auto">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-3 md:p-5 max-w-[1600px] mx-auto w-full">
         {/* Left Side - Event Flyer */}
-        <div className="space-y-6">
+        <div className="space-y-6 w-full max-w-[280px] mx-auto lg:max-w-full">
           {/* Cart Information Section */}
           {/* {authStore.user?.id && (
             <div className="bg-gradient-to-br from-blue-950/20 to-black p-4 rounded-2xl border border-gray-800 space-y-3">
@@ -1275,14 +1293,20 @@ const EventBookingForm = () => {
                 ))
               }
 
-              <Button
+              <button
                 type="button"
                 onClick={handleAddField}
                 disabled={(flyer?.form_type === "With Photo" || flyer?.hasPhotos) ? djList.length >= 4 : djListText.length >= 4}
-                className="mt-2 bg-primary hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed w-full"
+                className="mt-2 w-full h-10 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed shadow-md bg-[#b92025] hover:bg-red-600"
+                style={{
+                  backgroundColor: '#b92025',
+                  color: 'white'
+                }}
               >
-                Add More ({(flyer?.form_type === "With Photo" || flyer?.hasPhotos) ? djList.length : djListText.length}/4)
-              </Button>
+                <span className="text-white font-semibold text-sm">
+                  Add More ({(flyer?.form_type === "With Photo" || flyer?.hasPhotos) ? djList.length : djListText.length}/4)
+                </span>
+              </button>
             </div>
 
             {/* Host Section - RIGHT SIDE */}

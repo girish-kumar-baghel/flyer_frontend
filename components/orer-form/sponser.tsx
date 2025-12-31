@@ -77,7 +77,7 @@ const SponsorsBlock = observer(() => {
     <div className="space-y-4 bg-gradient-to-br from-red-950/20 to-black p-4 rounded-2xl border border-gray-800">
       <h2 className="text-xl font-bold">Sponsors</h2>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {["Sponsor 1", "Sponsor 2", "Sponsor 3"].map((label, index) => (
           <div key={index} className="flex flex-col gap-2 items-center">
             {/* Hidden file input */}

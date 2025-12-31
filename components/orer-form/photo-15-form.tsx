@@ -59,21 +59,34 @@ const Photo15Form: React.FC<Photo15FormProps> = ({ flyer }) => {
 
     // DJ List: ALL 4 with photo support
     const [djList, setDjList] = useState<{ name: string; image: string | null; }[]>(() => {
-        const storeDJs = flyerFormStore.flyerFormDetail.djsOrArtists;
         return [0, 1, 2, 3].map((i) => ({
-            name: storeDJs[i]?.name || "",
-            image: storeDJs[i]?.image ? URL.createObjectURL(storeDJs[i].image!) : null
+            name: "",
+            image: null
         }));
     });
 
     // Host List: ALL 2 with photo support
     const [hostList, setHostList] = useState<{ name: string; image: string | null; }[]>(() => {
-        const storeHosts = flyerFormStore.flyerFormDetail.host || [];
         return [0, 1].map((i) => ({
-            name: storeHosts[i]?.name || "",
-            image: storeHosts[i]?.image ? URL.createObjectURL(storeHosts[i].image!) : null
+            name: "",
+            image: null
         }));
     });
+
+    // Sync from MobX store after mount to be SSR-safe
+    useEffect(() => {
+        const storeDJs = flyerFormStore.flyerFormDetail.djsOrArtists;
+        setDjList([0, 1, 2, 3].map((i) => ({
+            name: storeDJs[i]?.name || "",
+            image: (storeDJs[i]?.image && typeof window !== 'undefined') ? URL.createObjectURL(storeDJs[i].image!) : null
+        })));
+
+        const storeHosts = flyerFormStore.flyerFormDetail.host || [];
+        setHostList([0, 1].map((i) => ({
+            name: storeHosts[i]?.name || "",
+            image: (storeHosts[i]?.image && typeof window !== 'undefined') ? URL.createObjectURL(storeHosts[i].image!) : null
+        })));
+    }, [flyerFormStore.flyerFormDetail]);
 
     const [note, setNote] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -370,10 +383,10 @@ const Photo15Form: React.FC<Photo15FormProps> = ({ flyer }) => {
     const flyerName = flyer?.name || "";
 
     return (
-        <div className="min-h-screen bg-black text-white">
-            <div className="grid lg:grid-cols-2 gap-8 p-3 md:p-5 max-w-[1600px] mx-auto">
+        <div className="min-h-screen bg-black text-white overflow-x-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-3 md:p-5 max-w-[1600px] mx-auto w-full">
                 {/* Left: Flyer Preview */}
-                <div className="relative h-[400px] lg:h-[600px] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
+                <div className="relative aspect-[4/5] w-full max-w-[280px] mx-auto lg:max-w-full rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
                     <img
                         src={flyerImage}
                         alt={flyerName}
@@ -540,25 +553,25 @@ const Photo15Form: React.FC<Photo15FormProps> = ({ flyer }) => {
                     {/* Submit Section */}
                     <div className="bg-gradient-to-br from-red-950/30 to-black p-4 rounded-2xl border border-gray-800 flex items-center justify-between">
                         <div className="flex gap-4 justify-center items-center">
-                            <Button
+                            <button
                                 type="button"
                                 disabled={isSubmitting}
                                 onClick={handleCheckout}
-                                className="bg-primary hover:bg-red-550 text-white px-3 
-                rounded-lg hover:cursor-pointer transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-900/50"
+                                className="h-10 px-6 rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-900/50 bg-[#b92025] hover:bg-red-600 font-semibold"
+                                style={{ backgroundColor: '#b92025', color: 'white' }}
                             >
                                 {isSubmitting ? (
-                                    <span className="flex items-center gap-2">
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    <span className="flex items-center gap-2 text-white">
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                         Processing...
                                     </span>
                                 ) : (
-                                    <span className="flex items-center gap-2">
+                                    <span className="flex items-center gap-2 text-white">
                                         <Check className="w-5 h-5" />
                                         Checkout Now
                                     </span>
                                 )}
-                            </Button>
+                            </button>
 
                             <Button
                                 type="button"
