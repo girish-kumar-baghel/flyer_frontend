@@ -21,10 +21,27 @@ export default function ContactPage() {
         e.preventDefault();
 
         await withLoading(async () => {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            toast.success("Message sent! We'll get back to you soon.");
-            setFormData({ name: "", email: "", subject: "", message: "" });
+            try {
+                const response = await fetch("http://193.203.161.174:3007/api/contact", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                if (response.ok) {
+                    toast.success("Message sent! We'll get back to you soon.");
+                    setFormData({ name: "", email: "", subject: "", message: "" });
+                } else {
+                    const errorText = await response.text();
+                    console.error("API Error:", errorText);
+                    toast.error("Failed to send message. Please try again later.");
+                }
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                toast.error("An error occurred. Please check your connection.");
+            }
         }, "Sending message...");
     };
 
